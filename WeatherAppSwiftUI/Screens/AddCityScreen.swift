@@ -9,17 +9,23 @@ import SwiftUI
 
 struct AddCityScreen: View {
     
+    @EnvironmentObject var store: Store
     @Environment(\.presentationMode) private var presentationMode
-    @State private var city: String = ""
+//    @State private var city: String = ""
+    @StateObject private var addWeatherVM = AddWeatherViewModel()
     
     var body: some View {
         
         VStack {
             VStack(spacing: 20) {
-                TextField("Enter city", text: $city)
+              TextField("Enter city", text: $addWeatherVM.city)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 Button("Save") {
-                    // save weather in environment object 
+                    // save weather in environment object
+                  addWeatherVM.save { weather in
+                    store.addWeather(weather)
+                    presentationMode.wrappedValue.dismiss()
+                  }
                    
                     
                 }.padding(10)
@@ -41,6 +47,6 @@ struct AddCityScreen: View {
 
 struct AddCityScreen_Previews: PreviewProvider {
     static var previews: some View {
-        AddCityScreen()
+      AddCityScreen().environmentObject(Store())
     }
 }
